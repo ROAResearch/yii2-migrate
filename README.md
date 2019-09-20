@@ -10,13 +10,13 @@ Instalation
 You can use composer to install the library `tecnocen/migrate` by running the
 command;
 
-`composer require tecnocen/migrate`
+`composer require roaresearch/yii2-migrate`
 
 or edit the `composer.json` file
 
 ```json
 require: {
-    "tecnocen/yii2-migrate": "*",
+    "roaresearch/yii2-migrate": "*",
 }
 ```
 
@@ -26,7 +26,7 @@ Usage
 
 ### Create Table Migrations
 
-You can use the `tecnocen\migrate\CreateTableMigration` to generate different
+You can use the `roaresearch\yii2\migrate\CreateTableMigration` to generate different
 type of migration tables to be used by each of your table types.
 
 For example lets say you want to save who and when edits and creates each the
@@ -34,9 +34,9 @@ entities on your system but your pivot tables only require to know when they
 were created since they can't be edited.
 
 ```php
-abstract class EntityTable extends \tecnocen\migrate\CreateTableMigration
+abstract class EntityTable extends \roaresearch\yii2\migrate\CreateTableMigration
 {
-    public function defaultColumns()
+    public function defaultColumns(): array
     {
         return [
             'created_at' => $this->datetime()->notNull(),
@@ -46,7 +46,7 @@ abstract class EntityTable extends \tecnocen\migrate\CreateTableMigration
         ]          
     }
 
-    public function defaultForeignKeys()
+    public function defaultForeignKeys(): array
     {
         return [
             'created_by' => 'user',
@@ -55,9 +55,9 @@ abstract class EntityTable extends \tecnocen\migrate\CreateTableMigration
     }
 }
 
-abstract class PivotTable extends \tecnocen\migrate\CreateTableMigration
+abstract class PivotTable extends \roaresearch\yii2\migrate\CreateTableMigration
 {
-    public function defaultColumns()
+    public function defaultColumns(): array
     {
         return [
             'created_at' => $this->datetime()->notNull(),
@@ -72,44 +72,54 @@ Then you can use them separatedly for each type of table you have
 ```php
 class m170101_010101_ticket extends EntityTable
 {
-     public function columns()
-     {
-         return [
-             'id' => $this->primaryKey(),
-             'project_id' => $this->normalKey(),
-             'title' => $this->string(150)->notNull(),
-             'description' => $this->text(),
-         ];
-     }
+    public function tableName(): string
+    {
+        return 'ticket';
+    }
 
-     public function foreignKeys()
-     {
-         return ['project_id' => ['table' => 'project']];
-     }
+    public function columns(): array
+    {
+        return [
+            'id' => $this->primaryKey(),
+            'project_id' => $this->normalKey(),
+            'title' => $this->string(150)->notNull(),
+            'description' => $this->text(),
+        ];
+    }
+
+    public function foreignKeys()
+    {
+        return ['project_id' => ['table' => 'project']];
+    }
 }
 
 class m17010101_010102_ticket_employee extends PivotTable
 {
-     public function columns()
-     {
-         return [
-             'ticket_id' => $this->normalKey(),
-             'employee_id' => $this->normalKey(),
-         ];
-     }
+    public function tableName(): string
+    {
+        return 'ticket_employee';
+    }
 
-     public function foreignKeys()
-     {
-         return [
-             'ticket_id' => ['table' => 'ticket'],
-             'employee_id' => ['table' => 'employee'],
-         ];
-     }
+    public function columns(): array
+    {
+        return [
+            'ticket_id' => $this->normalKey(),
+            'employee_id' => $this->normalKey(),
+        ];
+    }
 
-     public function compositePrimaryKeys()
-     {
-         return ['ticket_id', 'employee_id'];
-     }
+    public function foreignKeys(): array
+    {
+        return [
+            'ticket_id' => ['table' => 'ticket'],
+            'employee_id' => ['table' => 'employee'],
+        ];
+    }
+
+    public function compositePrimaryKeys(): array
+    {
+        return ['ticket_id', 'employee_id'];
+    }
 }
 ```
 
@@ -144,15 +154,16 @@ You can use the `tecnocen\migrate\CreateViewMigration` to generate SQL views
 migrations.
 
 ```php
-use tecnocen\migrate\CreateViewMigration;
 use common\models\Ticket;
+use roaresearch\yii2\migrate\CreateViewMigration;
+use yii\db\ActiveQuery;
 
 class m17010101_010101_ticket_details extends CreateViewMigration
 {
     /**
      * @inheritdoc
      */
-    public function viewName()
+    public function viewName(): string
     {
        return 'ticket_details';
     }
@@ -160,7 +171,7 @@ class m17010101_010101_ticket_details extends CreateViewMigration
     /**
      * @inheritdoc
      */
-    public function viewQuery()
+    public function viewQuery(): ActiveQuery
     {
         return Ticket::find()
             ->alias('t')
@@ -178,6 +189,3 @@ class m17010101_010101_ticket_details extends CreateViewMigration
     }
 }
 ```
-
-Where `viewName()` returns an string and `viewQuery()` return an instance of
-`yii\db\Query`

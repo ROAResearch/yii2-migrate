@@ -1,6 +1,6 @@
 <?php
 
-namespace tecnocen\migrate;
+namespace roaresearch\yii2\migrate;
 
 use yii\db\Query;
 

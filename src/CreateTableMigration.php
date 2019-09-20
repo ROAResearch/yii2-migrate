@@ -1,7 +1,8 @@
 <?php
 
-namespace tecnocen\migrate;
+namespace roaresearch\yii2\migrate;
 
+use yii\db\ColumnSchemaBuilder;
 use yii\helpers\ArrayHelper;
 
 /**
@@ -29,20 +30,20 @@ abstract class CreateTableMigration extends \yii\db\Migration
      *
      * @return string table name without prefix.
      */
-    abstract public function getTableName();
+    abstract public function getTableName(): string;
 
     /**
      * Defines the columns which will be used on the table definition.
      *
      * @return array column_name => column_definition pairs.
      */
-    abstract public function columns();
+    abstract public function columns(): array;
 
     /**
      * Table name with prefix.
      * @return string table name with the prefix.
      */
-    public function getPrefixedTableName()
+    public function getPrefixedTableName(): string
     {
         return '{{%' . $this->getTableName() . '}}';
     }
@@ -59,10 +60,11 @@ abstract class CreateTableMigration extends \yii\db\Migration
      * Returns a key column definition. Mostly used in foreign key columns.
      *
      * @param integer $length
-     * @return \yii\db\ColumnSchemaBuilder
+     * @return ColumnSchemaBuilder
      */
-    public function normalKey($length = self::DEFAULT_KEY_LENGTH)
-    {
+    public function normalKey(
+        $length = self::DEFAULT_KEY_LENGTH
+    ): ColumnSchemaBuilder {
         return $this->integer($length)->unsigned()->notNull();        
     }
 
@@ -70,9 +72,9 @@ abstract class CreateTableMigration extends \yii\db\Migration
      * Returns an activable column definition.
      *
      * @param boolean $default
-     * @return \yii\db\ColumnSchemaBuilder
+     * @return ColumnSchemaBuilder
      */
-    public function activable($default = true)
+    public function activable($default = true): ColumnSchemaBuilder
     {
         return $this->boolean()->notNull()->defaultValue($default);
     }
@@ -133,7 +135,7 @@ abstract class CreateTableMigration extends \yii\db\Migration
      *
      * @return array column_name => column_definition pairs.
      */
-    public function defaultColumns()
+    public function defaultColumns(): array
     {
         return [];
     }
@@ -144,7 +146,7 @@ abstract class CreateTableMigration extends \yii\db\Migration
      * @return array column_name => reference pairs where reference is an array
      * containing a 'table' index and optionally a 'column' index.
      */
-    public function defaultForeignKeys()
+    public function defaultForeignKeys(): array
     {
         return [];
     }
@@ -155,7 +157,7 @@ abstract class CreateTableMigration extends \yii\db\Migration
      * @return array column_name => reference pairs where reference is an array
      * containing a 'table' index and optionally a 'column' index.
      */
-    public function foreignKeys()
+    public function foreignKeys(): array
     {
         return [];
     }
@@ -174,7 +176,7 @@ abstract class CreateTableMigration extends \yii\db\Migration
      * @return string[] column names that define the primary key. if the result
      * is empty it will be ignored.
      */
-    public function compositePrimaryKeys()
+    public function compositePrimaryKeys(): array
     {
         return [];
     }
@@ -184,7 +186,7 @@ abstract class CreateTableMigration extends \yii\db\Migration
      * an string to be used to differentiate each index and index definition is
      * an array containing all the columns names for the unique index.
      */
-    public function compositeUniqueKeys()
+    public function compositeUniqueKeys(): array
     {
         return [];
     }

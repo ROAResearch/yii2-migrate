@@ -1,6 +1,12 @@
 Changelog
 =========
 
+2.0.0
+-----
+
+- [Brk] PSR12 support
+- [Brk] Namespace change.
+
 1.0.2
 -----
 

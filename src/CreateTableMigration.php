@@ -143,6 +143,7 @@ abstract class CreateTableMigration extends \yii\db\Migration
      *
      * @return array column_name => reference pairs where reference is an array
      * containing a 'table' index and optionally a 'column' index.
+     * @see foreignKeys()
      */
     public function defaultForeignKeys()
     {
@@ -150,10 +151,49 @@ abstract class CreateTableMigration extends \yii\db\Migration
     }
 
     /**
-     * The default foreign keys for a type of table.
+     * The specific foreign keys for a type of table.
      *
-     * @return array column_name => reference pairs where reference is an array
+     * The expected return is an array with each index representing a  foreign
+     * key definition. There is a short syntax and a long syntax.
+     *
+     * On the short syntax the index key represents the both the column name to
+     * be referenced and the foreign key name, while the index value represents
+     * the referred table..
+     *
+     * On the long syntax the index key represents the foreign key name only and
+     * the index value is an array itself which contains all the information to
+     * define the foreign key. The definition can include the keys.
+     * - table: required specifies which table will be referred.
+     * - columns: optional specifies which columns will be linked. If not defined
+     *   it will use the name of the index key referring to a column `id`.
+     * - onDelete: optional defines which action to take when a record is deleted.
+     *   if not defined it will use `$defaulOnDelete`.
+     * - onUpdate: optional defines which action to take when a record is updated.
+     *   if not defined it will use `$defaulOnUpdate`.
+     *
+     * Examples
+     *
+     * ```php
+     * return [
+     *     'stored_id' => ´department_store´, // short syntax
+     *     'manager_id' => [
+     *         'table' => 'user',
+     *         'onDelete' => 'SET NULL',
+     *     ],
+     *     'region' => [
+     *         'table' => 'country_division',
+     *         'columns' => [
+     *             'country_id' => 'country_id', // multiple columns
+     *             'region_id' => 'region_id',
+     *         ],
+     *     ],
+     * ];
+     * ```
+     *
+     * @return array column_name => reference pairs. where reference is an array
      * containing a 'table' index and optionally a 'column' index.
+     * @see $defaultOnDelete
+     * @see $defaultOnUpdate
      */
     public function foreignKeys()
     {

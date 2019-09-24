@@ -4,10 +4,10 @@ Yii2 Migrate Tools
 This library eases the creation of normalized databases by providing classes to
 create tables separatedly with a simple logic.
 
-Instalation
------------
+Installation
+------------
 
-You can use composer to install the library `tecnocen/migrate` by running the
+You can use composer to install the library `roaresearch/yii2-migrate` by running the
 command;
 
 `composer require roaresearch/yii2-migrate`
@@ -43,7 +43,7 @@ abstract class EntityTable extends \roaresearch\yii2\migrate\CreateTableMigratio
             'updated_at' => $this->datetime()->notNull(),
             'created_by' => $this->normalKey(),
             'updated_by' => $this->normalKey(),
-        ]          
+        ];
     }
 
     public function defaultForeignKeys(): array
@@ -61,7 +61,7 @@ abstract class PivotTable extends \roaresearch\yii2\migrate\CreateTableMigration
     {
         return [
             'created_at' => $this->datetime()->notNull(),
-        ]          
+        ];
     }
 }
 ```
@@ -156,7 +156,7 @@ migrations.
 ```php
 use common\models\Ticket;
 use roaresearch\yii2\migrate\CreateViewMigration;
-use yii\db\ActiveQuery;
+use yii\db\Query;
 
 class m17010101_010101_ticket_details extends CreateViewMigration
 {
@@ -171,7 +171,7 @@ class m17010101_010101_ticket_details extends CreateViewMigration
     /**
      * @inheritdoc
      */
-    public function viewQuery(): ActiveQuery
+    public function viewQuery(): Query
     {
         return Ticket::find()
             ->alias('t')

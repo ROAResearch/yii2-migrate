@@ -150,7 +150,7 @@ two foreign keys linked to the previous two columns.
 
 ### Create View Migrations
 
-You can use the `tecnocen\migrate\CreateViewMigration` to generate SQL views
+You can use the `roaresearch\yii2\migrate\CreateViewMigration` to generate SQL views
 migrations.
 
 ```php

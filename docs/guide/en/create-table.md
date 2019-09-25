@@ -21,7 +21,7 @@ table being created.
 `defaultColumns()` is executed afterwards and the columns defined here are
 appended at the end of the table. Its use case is to avoid redefining columns
 which are common in several tables, for example as used in
-[ROAresearch/yii2-rmdb](https://github.com/ROAResearch/yii2-rmdb).
+[ROAResearch/yii2-rmdb](https://github.com/ROAResearch/yii2-rmdb).
 
 See https://www.yiiframework.com/doc/api/2.0/yii-db-columnschema
 

@@ -148,7 +148,7 @@ the  columns.
 With a composite primary key of the columns `ticket_id` and `employee_id` and
 two foreign keys linked to the previous two columns.
 
-[Full class Documentation](docs/en/create-table.md)
+[Full class Documentation](docs/guide/en/create-table.md)
 
 ### Create View Migrations
 

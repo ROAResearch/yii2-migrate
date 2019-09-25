@@ -1,5 +1,5 @@
 {
-    "name": "tecnocen/yii2-migrate",
+    "name": "roaresearch/yii2-migrate",
     "description": "Yii 2 Library to handle normalized table creation",
     "keywords": [
         "yii2",
@@ -12,16 +12,16 @@
     "license": "BSD-3-Clause",
     "minimum-stability": "dev",
     "require": {
-        "php": ">=5.5",
-        "yiisoft/yii2": "~2.0.10"
+        "php": ">=7.1",
+        "yiisoft/yii2": "~2.0.27"
     },
     "require-dev": {
-        "codeception/base": "^2.2.3",
-        "codeception/verify": "~0.3.1"
+        "codeception/base": "~3.1.0",
+        "codeception/verify": "~1.2.0"
     },
     "autoload": {
         "psr-4": {
-            "tecnocen\\migrate\\": "src/"
+            "roaresearch\\yii2\\migrate\\": "src/"
         }
     }
 }

@@ -15,7 +15,7 @@ abstract class CreateViewMigration extends \yii\db\Migration
     /**
      * @inheritdoc
      */
-    public function up()
+    public function up(): void
     {
         $this->execute(
             'CREATE VIEW '
@@ -28,7 +28,7 @@ abstract class CreateViewMigration extends \yii\db\Migration
     /**
      * @inheritdoc
      */
-    public function down()
+    public function down(): void
     {
         $this->execute('DROP VIEW ' . $this->quotedViewName());
     }

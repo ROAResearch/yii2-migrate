@@ -13,25 +13,25 @@ class ForeignKey
     /**
      * @var string name of the referenced table
      */
-    protected readonly string $refTable;
+    public readonly string $refTable;
 
     /**
      * @var array pairs of source_column => reference_column
      */
-    protected readonly array $columns;
+    public readonly array $columns;
 
     /**
      * @var ReferenceOption
      */
-    protected readonly ReferenceOption $onDelete;
+    public readonly ReferenceOption $onDelete;
 
     /**
      * @var ReferenceOption
      */
-    protected readonly ReferenceOption $onUpdate;
+    public readonly ReferenceOption $onUpdate;
 
     /**
-     * @property CreateTableMigration $creator
+     * @property CreateTableMigration $migration
      * @property string $name the name which will be used to create the fk and idx constraints
      * @property string|array $reference data used to create the data of the foreign key
      */
@@ -50,14 +50,14 @@ class ForeignKey
 
         $this->refTable = $reference['table']
             ?? throw new InvalidConfigException(
-                "The reference table must be defined for constraint {this->name}"
+                "The reference table must be defined for constraint $name."
             );
 
         $this->columns = $reference['columns']
-            ?? [$this->name => $creator->defaultReferenceColumn];
+            ?? [$name => $migration->defaultReferenceColumn];
 
-        $this->onDelete = $reference['onDelete'] ?? $creator->defaultOnDelete;
-        $this->onUpdate = $reference['onUpdate'] ?? $creator->defaultOnUpdate;
+        $this->onDelete = $reference['onDelete'] ?? $migration->defaultOnDelete;
+        $this->onUpdate = $reference['onUpdate'] ?? $migration->defaultOnUpdate;
     }
 
     /**
@@ -77,7 +77,7 @@ class ForeignKey
             $this->getFKName(),
             $this->migration->getPrefixedTableName(),
             $this->getSourceColumns(),
-            "{{%{$this->refTable}}}",
+            $this->migration->prefixName($this->refTable),
             $this->getReferenceColumns(),
             $this->onDelete->value,
             $this->onUpdate->value
@@ -123,7 +123,9 @@ class ForeignKey
      */
     public function getFKName(): string
     {
-        return "{{%fk-{$this->creator->getTableName()}-{$this->name}}}";
+        return $this->migration->prefixName(
+            "fk-{$this->migration->getTableName()}-{$this->name}"
+        );
     }
 
     /**
@@ -131,6 +133,8 @@ class ForeignKey
      */
     public function getIdxName(): string
     {
-        return "{{%idx-{$this->creator->getTableName()}-{$this->name}}}";
+        return $this->migration->prefixName(
+            "idx-{$this->migration->getTableName()}-{$this->name}"
+        );
     }
 }

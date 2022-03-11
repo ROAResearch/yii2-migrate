@@ -36,7 +36,12 @@ abstract class CreateTableMigration extends \yii\db\Migration
      */
     public function getPrefixedTableName(): string
     {
-        return '{{%' . $this->getTableName() . '}}';
+        return $this->prefixName($this->getTableName());
+    }
+
+    public function prefixName(string $name): string
+    {
+        return "{{%$name}}";
     }
 
     /**
@@ -50,11 +55,11 @@ abstract class CreateTableMigration extends \yii\db\Migration
     /**
      * Returns a key column definition. Mostly used in foreign key columns.
      *
-     * @param integer $length
+     * @param int $length
      * @return ColumnSchemaBuilder
      */
     public function normalKey(
-        $length = self::DEFAULT_KEY_LENGTH
+        int $length = self::DEFAULT_KEY_LENGTH
     ): ColumnSchemaBuilder {
         return $this->integer($length)->unsigned()->notNull();        
     }
@@ -62,10 +67,10 @@ abstract class CreateTableMigration extends \yii\db\Migration
     /**
      * Returns an activable column definition.
      *
-     * @param boolean $default
+     * @param bool $default
      * @return ColumnSchemaBuilder
      */
-    public function activable($default = true): ColumnSchemaBuilder
+    public function activable(bool $default = true): ColumnSchemaBuilder
     {
         return $this->boolean()->notNull()->defaultValue($default);
     }

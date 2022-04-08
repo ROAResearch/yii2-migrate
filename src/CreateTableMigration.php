@@ -16,6 +16,12 @@ abstract class CreateTableMigration extends \yii\db\Migration
 
     public const DEFAULT_KEY_LENGTH = 11;
 
+    protected const MYSQL_OPTIONS = <<<SQL
+        CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE=InnoDB
+        SQL;
+
+    protected const DEFAULT_OPTIONS = null;
+
     /**
      * Table name used to generate the migration.
      *
@@ -84,8 +90,8 @@ abstract class CreateTableMigration extends \yii\db\Migration
             $this->prefixedTableName,
             [...$this->columns(), ...$this->defaultColumns()],
             $this->db->driverName === 'mysql'
-                ? $this->mysqlOptions
-                : $this->defaultOptions
+                ? static::MYSQL_OPTIONS
+                : static::DEFAULT_OPTIONS
         );
 
         $columns = $this->compositePrimaryKeys();

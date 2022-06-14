@@ -55,11 +55,12 @@ define the foreign key. The definition can include the keys.
 Examples
 
 ```php
+
 return [
     'stored_id' => ´department_store´, // short syntax
     'manager_id' => [
         'table' => 'user',
-        'onDelete' => 'SET NULL',
+        'onDelete' => ReferenceOption::SetNull,
     ],
     'region' => [
         'table' => 'country_division',
@@ -71,6 +72,10 @@ return [
 ];
 ```
 
+> Starting version `3.0.0` PHP 8.1 is required and the enum
+  `roaresearch\yii2\migrate\ReferenceOptions` is used for better control of
+  the foreign key constraints.
+
 Method `compositePrimaryKeys(): array`
 --------------------------------------
 
@@ -78,7 +83,7 @@ Method to define primary keys using multiple columns or a single column
 without rellying on `primaryKey()`.
 
 ```php
-public function compositePrimaryKeys()
+public function compositePrimaryKeys(): array
 {
     return ['sale_id', 'article_id'];
 }

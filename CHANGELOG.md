@@ -1,6 +1,12 @@
 Changelog
 =========
 
+3.0.0 13 June, 2022
+-------------------
+
+- [Brk] Php8.1 dependency
+- [Brk] DAO for foreign keys.
+
 2.0.0
 -----
 
@@ -10,7 +16,7 @@ Changelog
 1.0.2
 -----
 
-- [Enh] `tecnocen\migrate\CreateViewMigration` to create migrations
+- [Enh] `roaresearch\migrate\CreateViewMigration` to create migrations
   using `yii\db\Query` instances.
 
 1.0.1

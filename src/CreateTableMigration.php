@@ -3,7 +3,6 @@
 namespace roaresearch\yii2\migrate;
 
 use yii\db\ColumnSchemaBuilder;
-use yii\helpers\ArrayHelper;
 
 /**
  * Handles the creation for one table.
@@ -13,17 +12,15 @@ use yii\helpers\ArrayHelper;
  */
 abstract class CreateTableMigration extends \yii\db\Migration
 {
-    const DEFAULT_KEY_LENGTH = 11;
+    use ForeignKeyBuilder;
 
-    /**
-     * @var string default action delete used when creating foreign keys.
-     */
-    public $defaultOnDelete = 'CASCADE';
+    public const DEFAULT_KEY_LENGTH = 11;
 
-    /**
-     * @var string default action update used when creating foreign keys.
-     */
-    public $defaultOnUpdate = 'CASCADE';
+    protected const MYSQL_OPTIONS = <<<SQL
+        CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE=InnoDB
+        SQL;
+
+    protected const DEFAULT_OPTIONS = null;
 
     /**
      * Table name used to generate the migration.
@@ -45,7 +42,12 @@ abstract class CreateTableMigration extends \yii\db\Migration
      */
     public function getPrefixedTableName(): string
     {
-        return '{{%' . $this->getTableName() . '}}';
+        return $this->prefixName($this->getTableName());
+    }
+
+    public function prefixName(string $name): string
+    {
+        return "{{%$name}}";
     }
 
     /**
@@ -59,11 +61,11 @@ abstract class CreateTableMigration extends \yii\db\Migration
     /**
      * Returns a key column definition. Mostly used in foreign key columns.
      *
-     * @param integer $length
+     * @param int $length
      * @return ColumnSchemaBuilder
      */
     public function normalKey(
-        $length = self::DEFAULT_KEY_LENGTH
+        int $length = self::DEFAULT_KEY_LENGTH
     ): ColumnSchemaBuilder {
         return $this->integer($length)->unsigned()->notNull();        
     }
@@ -71,10 +73,10 @@ abstract class CreateTableMigration extends \yii\db\Migration
     /**
      * Returns an activable column definition.
      *
-     * @param boolean $default
+     * @param bool $default
      * @return ColumnSchemaBuilder
      */
-    public function activable($default = true): ColumnSchemaBuilder
+    public function activable(bool $default = true): ColumnSchemaBuilder
     {
         return $this->boolean()->notNull()->defaultValue($default);
     }
@@ -82,17 +84,15 @@ abstract class CreateTableMigration extends \yii\db\Migration
     /**
      * @inheritdoc
      */
-    public function up()
+    public function up(): void
     {
-        $tableOptions = null;
-        if ($this->db->driverName === 'mysql') {
-            $tableOptions = 'CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE=InnoDB';
-        }
-
-        $this->createTable($this->prefixedTableName, array_merge(
-            $this->columns(), 
-            $this->defaultColumns()
-        ), $tableOptions);
+        $this->createTable(
+            $this->prefixedTableName,
+            [...$this->columns(), ...$this->defaultColumns()],
+            $this->db->driverName === 'mysql'
+                ? static::MYSQL_OPTIONS
+                : static::DEFAULT_OPTIONS
+        );
 
         $columns = $this->compositePrimaryKeys();
         if (!empty($columns)) {
@@ -112,10 +112,10 @@ abstract class CreateTableMigration extends \yii\db\Migration
             );
         }
 
-        $this->createForeignKeys(array_merge(
-            $this->foreignKeys(),
-            $this->defaultForeignKeys()
-        ));
+        $this->createForeignKeys([
+            ...$this->foreignKeys(),
+            ...$this->defaultForeignKeys(),
+        ]);
     }
 
     /**
@@ -123,10 +123,10 @@ abstract class CreateTableMigration extends \yii\db\Migration
      */
     public function down()
     {
-        $this->dropForeignKeys(array_merge(
-            $this->foreignKeys(),
-            $this->defaultForeignKeys()
-        ));
+        $this->dropForeignKeys([
+            ...$this->foreignKeys(),
+            ...$this->defaultForeignKeys(),
+        ]);
         $this->dropTable($this->prefixedTableName);
     }
 
@@ -229,84 +229,5 @@ abstract class CreateTableMigration extends \yii\db\Migration
     public function compositeUniqueKeys(): array
     {
         return [];
-    }
-
-    /**
-     * Creates foreign keys for the table.
-     *
-     * @param array column_name => reference pairs where reference is an array
-     * containing a 'table' index and optionally a 'column' index.
-     */
-    protected function createForeignKeys(array $keys)
-    {
-        $table = $this->getTableName();
-        foreach ($keys as $columnName => $reference) {
-            if (is_string($reference)) {
-                $refTable = $reference;
-                $columns = [$columnName => 'id'];
-                $onDelete = $this->defaultOnDelete;
-                $onUpdate = $this->defaultOnUpdate;
-            } else {
-                $refTable = $reference['table'];
-                $columns = ArrayHelper::getValue(
-                    $reference,
-                    'columns',
-                    [$columnName => 'id']
-                );
-                
-                $onDelete = ArrayHelper::getValue(
-                    $reference,
-                    'onDelete',
-                    $this->defaultOnDelete
-                );
-                $onUpdate = ArrayHelper::getValue(
-                    $reference,
-                    'onUpdate',
-                    $this->defaultOnUpdate
-                );
-            }
-
-            // creates index for column
-            $this->createIndex(
-                "{{%idx-$table-$columnName}}",
-                $this->prefixedTableName,
-                array_keys($columns)
-            );
-
-            // creates the foreign key
-            $this->addForeignKey(
-                "{{%fk-$table-$columnName}}",
-                $this->prefixedTableName,
-                array_keys($columns),
-                "{{%$refTable}}",
-                array_values($columns),
-                $onDelete,
-                $onUpdate
-            );
-        }
-    }
-
-    /**
-     * Drops foreign keys for the table.
-     *
-     * @param array column_name => reference pairs where reference is an array
-     * containing a 'table' index and optionally a 'column' index.
-     */
-    protected function dropForeignKeys(array $keys)
-    {
-        $table = $this->getTableName();
-        foreach ($keys as $columnName => $reference) {
-            // drops the foreign key
-            $this->dropForeignKey(
-                "{{%fk-$table-$columnName}}",
-                $this->prefixedTableName
-            );
-
-            // drops index for column
-            $this->dropIndex(
-                "{{%idx-$table-$columnName}}",
-                $this->prefixedTableName
-            );
-        }
     }
 }

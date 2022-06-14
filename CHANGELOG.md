@@ -5,7 +5,7 @@ Changelog
 -------------------
 
 - [Brk] Php8.1 dependency
-    - [Brk] DAO for foreign keys.
+- [Brk] DAO for foreign keys.
 
 2.0.0
 -----

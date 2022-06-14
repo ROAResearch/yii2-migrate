@@ -1,6 +1,12 @@
 Changelog
 =========
 
+3.0.0 13 June, 2022
+-------------------
+
+- [Brk] Php8.1 dependency
+    - [Brk] DAO for foreign keys.
+
 2.0.0
 -----
 
